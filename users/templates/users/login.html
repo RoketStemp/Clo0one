@@ -6,18 +6,14 @@
 </head>
 <body>
 Login Page
-<form>
-    {{ form.non_field_errors }}
-    <p class="fieldWrapper">
-        {{ form.username.errors }}
-        {{ form.username.label_tag }}
-        {{ form.username }}
-    </p>
-    <p class="fieldWrapper">
-        {{ form.password.errors }}
-        {{ form.password.label_tag }}
-        {{ form.password }}
-    </p>
+<form method="POST">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="fieldWrapper">
+            <p>{{ field.errors }}</p>
+            <p>{{ field.label_tag }} {{ field }}</p>
+        </div>
+    {% endfor %}
     <button type="submit">Login</button>
 </form>
 </body>
