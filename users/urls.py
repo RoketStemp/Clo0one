@@ -3,6 +3,10 @@ from django.urls import path
 from users import views
 
 urlpatterns = [
+    # all users url
+
+    path('', views.show_all_users_view, name='show_all_users_view'),
+
     # auth urls
 
     path('registration/', views.user_registration_view, name='user_registration_view'),

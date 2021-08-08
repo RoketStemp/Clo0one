@@ -11,7 +11,9 @@
 <p>{{ user.email }}</p>
 <p>{{ user_info.description }}</p>
 <p>{{ user_info.profile_photo }}</p>
-<a href="{% url 'user_profile_edit_view' user.username %}">Edit</a>
+{% if user.username == request.user.username %}
+    <a href="{% url 'user_profile_edit_view' user.username %}">Edit</a>
+{% endif %}
 <a href="{%  url 'user_logout_view' %}">Log out</a>
 </body>
 </html>

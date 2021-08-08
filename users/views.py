@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 
 from .forms import LoginForm, RegistrationForm, UserProfileEditForm
@@ -55,7 +56,13 @@ def user_registration_view(request):
 def user_home_page_view(request, username):
     """Getting user info to show it on the profile page got by username"""
     user = User.objects.get(username=username)
-    user_info = CustomUser.objects.get(user=user.id)
+    try:
+        user_info = CustomUser.objects.get(user=user.id)
+    except ObjectDoesNotExist:
+        return render(request, 'users/profile.html', {
+            'user': user,
+            'user_info': False
+        })
     return render(request, 'users/profile.html', {
         'user': user,
         'user_info': user_info
@@ -65,7 +72,7 @@ def user_home_page_view(request, username):
 def user_profile_edit_view(request, username):
     """User profile edit view"""
     user = User.objects.get(username=username)
-    user_info = CustomUser.objects.get(user=request.user.id)
+    user_info = CustomUser.objects.get(user=user.id)
     if request.method == 'POST':
         form = UserProfileEditForm(request.POST)
 
@@ -93,3 +100,8 @@ def user_profile_edit_view(request, username):
         'user_info': user_info,
         'form': form
     })
+
+
+def show_all_users_view(request):
+    users = User.objects.all()
+    return render(request, 'users/users.html', {'users': users})
