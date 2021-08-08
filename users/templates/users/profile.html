@@ -5,13 +5,13 @@
     <title>Title</title>
 </head>
 <body>
-<p>{{ request.user.username }}</p>
-<p>{{ request.user.first_name }}</p>
-<p>{{ request.user.last_name }}</p>
-<p>{{ request.user.email }}</p>
+<p>{{ user.username }}</p>
+<p>{{ user.first_name }}</p>
+<p>{{ user.last_name }}</p>
+<p>{{ user.email }}</p>
 <p>{{ user_info.description }}</p>
 <p>{{ user_info.profile_photo }}</p>
-<a href="{% url 'user_profile_edit_view' %}">Edit</a>
+<a href="{% url 'user_profile_edit_view' user.username %}">Edit</a>
 <a href="{%  url 'user_logout_view' %}">Log out</a>
 </body>
 </html>
