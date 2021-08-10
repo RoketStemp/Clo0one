@@ -16,5 +16,9 @@ urlpatterns = [
     # profile urls
 
     path('<str:username>/', views.user_home_page_view, name='user_home_page_view'),
-    path('<str:username>/edit/', views.user_profile_edit_view, name='user_profile_edit_view')
+    path('<str:username>/edit/', views.user_profile_edit_view, name='user_profile_edit_view'),
+
+    #subs urls
+
+    path('subscribe/<int:user_id>/', views.subscribe_view, name='subscribe')
 ]

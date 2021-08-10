@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 
 from .forms import LoginForm, RegistrationForm, UserProfileEditForm
-from .models import User, CustomUser
+from .models import User, CustomUser, UserSubscribers, UserSubscriptions
 
 
 def user_login_view(request):
@@ -45,6 +45,7 @@ def user_registration_view(request):
                 username=form.cleaned_data['username'],
                 password=form.cleaned_data['password']
             )
+            CustomUser.objects.create(user=user)
             login(request, user)
             return redirect('user_home_page_view', username=user.username)
 
@@ -104,4 +105,19 @@ def user_profile_edit_view(request, username):
 
 def show_all_users_view(request):
     users = User.objects.all()
-    return render(request, 'users/users.html', {'users': users})
+    return render(request, 'users/users.html', {
+        'users': users
+    })
+
+
+def subscribe_view(request, user_id):
+    user = CustomUser.objects.get(user=request.user.id)
+    user_subscribe = User.objects.get(id=user_id)
+    user_for_subscribe = CustomUser.objects.get(user=user_subscribe.id)
+    subscription = UserSubscriptions.objects.get_or_create(user=user_for_subscribe.user)
+    subscribe = UserSubscribers.objects.get_or_create(user=User.objects.get(id=request.user.id))
+    user.subscriptions.add(subscription[0])
+    user_for_subscribe.subscribers.add(subscribe[0])
+    user.save()
+    user_for_subscribe.save()
+    return redirect('show_all_users_view')
