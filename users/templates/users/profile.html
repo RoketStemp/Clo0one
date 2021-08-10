@@ -11,6 +11,20 @@
 <p>{{ user.email }}</p>
 <p>{{ user_info.description }}</p>
 <p>{{ user_info.profile_photo }}</p>
+<div>
+    <p>{{ user_info.subscribers.count }}</p>
+    {% for subscriber in user_info.subscribers.all %}
+        <p>{{ subscriber.user.username }}</p>
+    {% endfor %}
+</div>
+
+<div>
+    <p>{{ user_info.subscriptions.count }}</p>
+    {% for subscription in user_info.subscriptions.all %}
+        <p>{{ subscription.user.username }}</p>
+    {% endfor %}
+</div>
+
 {% if user.username == request.user.username %}
     <a href="{% url 'user_profile_edit_view' user.username %}">Edit</a>
 {% endif %}
