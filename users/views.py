@@ -1,13 +1,18 @@
 from django.contrib.auth import authenticate, login, logout
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 
+from .user_services import \
+    select_current_user_and_user_info, \
+    create_new_user_and_custom_user, \
+    edit_current_user_personal_data, \
+    add_subscriber_and_subscription_to_user, \
+    get_all_users
+
 from .forms import LoginForm, RegistrationForm, UserProfileEditForm
-from .models import User, CustomUser, UserSubscribers, UserSubscriptions
 
 
 def user_login_view(request):
-    """Log in user if cant redirect to login page again"""
+    """Log in user if can`t show errors otherwise redirect to the profile page"""
     if request.method == 'POST':
         form = LoginForm(request.POST)
         user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
@@ -31,7 +36,8 @@ def user_logout_view(request):
 
 
 def user_registration_view(request):
-    """Register user if password and confirm_password arent similar and login is unique"""
+    """Create new user if password and confirm_password are the same and login was not used before,
+    login him and redirect to the profile page"""
     if request.method == 'GET':
         form = RegistrationForm()
     else:
@@ -41,11 +47,10 @@ def user_registration_view(request):
             form.add_error('username', 'Password and Confirm password are different')
 
         if form.is_valid():
-            user = User.objects.create_user(
+            user = create_new_user_and_custom_user(
                 username=form.cleaned_data['username'],
                 password=form.cleaned_data['password']
             )
-            CustomUser.objects.create(user=user)
             login(request, user)
             return redirect('user_home_page_view', username=user.username)
 
@@ -55,15 +60,9 @@ def user_registration_view(request):
 
 
 def user_home_page_view(request, username):
-    """Getting user info to show it on the profile page got by username"""
-    user = User.objects.get(username=username)
-    try:
-        user_info = CustomUser.objects.get(user=user.id)
-    except ObjectDoesNotExist:
-        return render(request, 'users/profile.html', {
-            'user': user,
-            'user_info': False
-        })
+    """Getting user info to show it on the user profile page selected by username"""
+    user, user_info = select_current_user_and_user_info(username)
+
     return render(request, 'users/profile.html', {
         'user': user,
         'user_info': user_info
@@ -71,21 +70,15 @@ def user_home_page_view(request, username):
 
 
 def user_profile_edit_view(request, username):
-    """User profile edit view"""
-    user = User.objects.get(username=username)
-    user_info = CustomUser.objects.get(user=user.id)
+    """Edit user personal data gotten from UserProfileEditForm
+    and set previous values as initial to form"""
+    user, user_info = select_current_user_and_user_info(username)
+    print(user.first_name, user_info)
+
     if request.method == 'POST':
         form = UserProfileEditForm(request.POST)
+        edit_current_user_personal_data(request=request, username=username)
 
-        user.first_name = request.POST['first_name']
-        user.last_name = request.POST['last_name']
-        user.username = request.POST['username']
-        user.email = request.POST['email']
-        if request.POST['profile_photo'] != '':
-            user_info.profile_photo = request.POST['profile_photo']
-        user_info.description = request.POST['description']
-        user.save()
-        user_info.save()
         return redirect('user_profile_edit_view', username=user.username)
     else:
         form = UserProfileEditForm(initial={
@@ -104,20 +97,14 @@ def user_profile_edit_view(request, username):
 
 
 def show_all_users_view(request):
-    users = User.objects.all()
+    """Show all users"""
+    users = get_all_users()
     return render(request, 'users/users.html', {
         'users': users
     })
 
 
-def subscribe_view(request, user_id):
-    user = CustomUser.objects.get(user=request.user.id)
-    user_subscribe = User.objects.get(id=user_id)
-    user_for_subscribe = CustomUser.objects.get(user=user_subscribe.id)
-    subscription = UserSubscriptions.objects.get_or_create(user=user_for_subscribe.user)
-    subscriber = UserSubscribers.objects.get_or_create(user=User.objects.get(id=request.user.id))
-    user.subscriptions.add(subscription[0])
-    user_for_subscribe.subscribers.add(subscriber[0])
-    user.save()
-    user_for_subscribe.save()
+def subscribe_view(request, username):
+    add_subscriber_and_subscription_to_user(request, username)
+
     return redirect('show_all_users_view')

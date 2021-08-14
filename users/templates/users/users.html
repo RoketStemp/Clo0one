@@ -9,7 +9,7 @@
     <div>
         <a href="{% url 'user_home_page_view' user.username %}">{{ user.username }}</a>
         {% if user.id != request.user.id %}
-            <a href="{% url 'subscribe' user.id %}">Subscribe</a>
+            <a href="{% url 'subscribe' user.username %}">Subscribe</a>
         {% endif %}
     </div>
     
