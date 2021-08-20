@@ -73,13 +73,20 @@ def user_profile_edit_view(request, username):
     """Edit user personal data gotten from UserProfileEditForm
     and set previous values as initial to form"""
     user, user_info = select_current_user_and_user_info(username)
-    print(user.first_name, user_info)
 
     if request.method == 'POST':
         form = UserProfileEditForm(request.POST)
-        edit_current_user_personal_data(request=request, username=username)
+        username = edit_current_user_personal_data(
+            new_first_name=request.POST['first_name'],
+            new_last_name=request.POST['last_name'],
+            new_username=request.POST['username'],
+            new_email=request.POST['email'],
+            new_profile_photo=request.POST['profile_photo'],
+            new_description=request.POST['description'],
+            username=username
+        )
 
-        return redirect('user_profile_edit_view', username=user.username)
+        return redirect('user_home_page_view', username=username)
     else:
         form = UserProfileEditForm(initial={
             'first_name': user.first_name,

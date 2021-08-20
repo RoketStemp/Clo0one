@@ -20,19 +20,24 @@ def create_new_user_and_custom_user(username, password):
     return user
 
 
-def edit_current_user_personal_data(request, username):
+def edit_current_user_personal_data(
+        new_first_name, new_last_name, new_username, new_email,
+        new_profile_photo, new_description, username
+):
     """Get current user by username and change his data gotten from the form"""
     user, user_info = select_current_user_and_user_info(username)
 
-    user.first_name = request.POST['first_name']
-    user.last_name = request.POST['last_name']
-    user.username = request.POST['username']
-    user.email = request.POST['email']
-    if request.POST['profile_photo'] != '':
-        user_info.profile_photo = request.POST['profile_photo']
-    user_info.description = request.POST['description']
+    user.first_name = new_first_name
+    user.last_name = new_last_name
+    user.username = new_username
+    user.email = new_email
+    if new_profile_photo != '':
+        user_info.profile_photo = new_profile_photo
+    user_info.description = new_description
     user.save()
     user_info.save()
+
+    return user.username
 
 
 def add_subscriber_and_subscription_to_user(request, username):
