@@ -81,10 +81,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'CloneDB',
-        'USER': 'roketstemp',
-        'PASSWORD': '123',
+        'USER': 'postgres',
+        'PASSWORD': 'dayn123123',
         'HOST': '127.0.0.1',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 
