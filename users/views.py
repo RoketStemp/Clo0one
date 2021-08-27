@@ -2,11 +2,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 
 from .user_services import \
-    select_current_user_and_user_info, \
+    select_current_user_and_user_info_by_username_or_user_id, \
     create_new_user_and_custom_user, \
     edit_current_user_personal_data, \
-    add_subscriber_and_subscription_to_user, \
-    get_all_users
+    add_or_remove_subscriber_and_subscription_to_user, \
+    get_all_users, \
+    get_current_user_subscriptions
 
 from .forms import LoginForm, RegistrationForm, UserProfileEditForm
 
@@ -61,7 +62,7 @@ def user_registration_view(request):
 
 def user_home_page_view(request, username):
     """Getting user info to show it on the user profile page selected by username"""
-    user, user_info = select_current_user_and_user_info(username)
+    user, user_info = select_current_user_and_user_info_by_username_or_user_id(username)
 
     return render(request, 'users/profile.html', {
         'user': user,
@@ -72,7 +73,7 @@ def user_home_page_view(request, username):
 def user_profile_edit_view(request, username):
     """Edit user personal data gotten from UserProfileEditForm
     and set previous values as initial to form"""
-    user, user_info = select_current_user_and_user_info(username)
+    user, user_info = select_current_user_and_user_info_by_username_or_user_id(username)
 
     if request.method == 'POST':
         form = UserProfileEditForm(request.POST)
@@ -106,12 +107,27 @@ def user_profile_edit_view(request, username):
 def show_all_users_view(request):
     """Show all users"""
     users = get_all_users()
+    _, user_info = select_current_user_and_user_info_by_username_or_user_id(user_id=request.user.id)
+    subscriptions = get_current_user_subscriptions(user_info.subscriptions.all())
     return render(request, 'users/users.html', {
-        'users': users
+        'users': users,
+        'subscriptions': subscriptions
     })
 
 
 def subscribe_view(request, username):
-    add_subscriber_and_subscription_to_user(request, username)
+    add_or_remove_subscriber_and_subscription_to_user(
+        current_user_id=request.user.id,
+        username=username,
+        action='add'
+    )
+    return redirect('show_all_users_view')
 
+
+def unsubscribe_view(request, username):
+    add_or_remove_subscriber_and_subscription_to_user(
+        current_user_id=request.user.id,
+        username=username,
+        action='remove'
+    )
     return redirect('show_all_users_view')

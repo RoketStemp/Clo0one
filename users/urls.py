@@ -20,5 +20,7 @@ urlpatterns = [
 
     # subs urls
 
-    path('subscribe/<str:username>/', views.subscribe_view, name='subscribe')
+    path('subscribe/<str:username>/', views.subscribe_view, name='subscribe'),
+    path('unsubscribe/<str:username>/', views.unsubscribe_view, name='unsubscribe')
+
 ]

@@ -6,13 +6,20 @@
 </head>
 <body>
 {% for user in users %}
+    {{ user.id }}
+    {{ subscriptions }}
     <div>
         <a href="{% url 'user_home_page_view' user.username %}">{{ user.username }}</a>
         {% if user.id != request.user.id %}
-            <a href="{% url 'subscribe' user.username %}">Subscribe</a>
+            {% if user.id in subscriptions %}
+                <a href="{% url 'unsubscribe' user.username %}">Unsubscribe</a>
+            {% else %}
+                <a href="{% url 'subscribe' user.username %}">Subscribe</a>
+            {% endif %}
         {% endif %}
     </div>
     
 {% endfor %}
 </body>
 </html>
+
