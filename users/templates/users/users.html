@@ -6,8 +6,6 @@
 </head>
 <body>
 {% for user in users %}
-    {{ user.id }}
-    {{ subscriptions }}
     <div>
         <a href="{% url 'user_home_page_view' user.username %}">{{ user.username }}</a>
         {% if user.id != request.user.id %}
