@@ -1,19 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'posts/base/template.html' %}
+{% block content %}
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Post</button>
+    </form>
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Post</button>
-</form>
+    {% for post in posts %}
+        <p>{{ post.text }}</p>
+    {% endfor %}
 
-{% for post in posts %}
-    <p>{{ post.text }}</p>
-{% endfor %}
-</body>
-</html>
+{% endblock %}

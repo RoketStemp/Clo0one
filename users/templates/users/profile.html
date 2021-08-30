@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'posts/base/template.html' %}
+{% block content %}
 <p>{{ user.username }}</p>
 <p>{{ user.first_name }}</p>
 <p>{{ user.last_name }}</p>
@@ -29,5 +24,4 @@
     <a href="{% url 'user_profile_edit_view' user.username %}">Edit</a>
 {% endif %}
 <a href="{%  url 'user_logout_view' %}">Log out</a>
-</body>
-</html>
+{% endblock %}

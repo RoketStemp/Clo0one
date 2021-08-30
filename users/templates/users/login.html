@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'posts/base/template.html' %}
+{% block content %}
 Login Page
 <form method="POST">
     {% csrf_token %}
@@ -16,5 +11,4 @@ Login Page
     {% endfor %}
     <button type="submit">Login</button>
 </form>
-</body>
-</html>
+{% endblock %}

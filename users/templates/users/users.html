@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'posts/base/template.html' %}
+{% block content %}
 {% for user in users %}
     <div>
         <a href="{% url 'user_home_page_view' user.username %}">{{ user.username }}</a>
@@ -18,6 +13,5 @@
     </div>
     
 {% endfor %}
-</body>
-</html>
+{% endblock %}
 
